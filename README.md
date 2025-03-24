@@ -16,7 +16,7 @@ Welcome to **Coral Chapters**, a modern and intuitive digital bookstore that let
 - **Frontend**: React, Tailwind CSS  
 - **Backend**: Node.js, Express.js  
 - **Database**: MongoDB  
-- **Authentication**: JWT (JSON Web Token)  
+- **Authentication**: Bcrypt 
 - **State Management**: Context API  
 
 ## 📂 Project Setup
