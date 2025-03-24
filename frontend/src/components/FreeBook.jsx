@@ -4,9 +4,23 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Cards from "./Cards";
 import { ThemeContext } from "./ThemeContext";
-import { useContext} from "react";
-
+import { useContext,useState,useEffect} from "react";
+import axios from 'axios'
 const FreeBook = () => {
+    const [book,setBook]=useState([]);
+    useEffect(()=>{
+        const getBook =async()=>{
+            try {
+                const res=await axios.get('http://localhost:4001/book')
+                // console.log("it's me")
+                // console.log(res.data);
+                setBook( res.data.filter((data) => data.category === "Free"))
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getBook();
+    },[])
     const { theme} = useContext(ThemeContext);
     const freeData = List.filter((data) => data.category === "Free");
 
@@ -57,7 +71,7 @@ const FreeBook = () => {
                     <div className="slider-container">
                         <Slider {...settings} className="space-2">
                             {/* Fix here: Return Cards component from map */}
-                            {freeData.map((item) => (
+                            {book.map((item) => (
                                 <Cards item={item} key={item.id} />
                             ))}
                         </Slider>

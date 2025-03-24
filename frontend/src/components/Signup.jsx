@@ -3,7 +3,10 @@ import { ThemeContext } from "./ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Login from "./Login"; // Import the Login component
-
+import axios from 'axios'
+import toast from "react-hot-toast";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 const Signup = () => {
     const { theme } = useContext(ThemeContext);
     const navigate = useNavigate();
@@ -17,24 +20,49 @@ const Signup = () => {
     } = useForm();
 
     const onSubmit = async (data) => {
-        // Log the submitted data first
-        console.log(data);
-
-
         try {
-
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-            navigate("/");  // Navigate to home page after successful signup
+            const userInfo = {
+                fullname: data.fullname,
+                email: data.email,
+                password: data.password
+            };
+    
+            const response = await axios.post("http://localhost:4001/user/signup", userInfo);
+    
+            console.log("Full Response from Server:", response); // Debugging step
+    
+            // If the status is 201, show success message
+            if (response?.status === 201) {
+                toast.success("Signup Successful",{duration:3000});
+                const newData=await response.data.user;
+                localStorage.setItem("user", JSON.stringify(newData)); // Store user data
+            } else {
+                alert(`Unexpected response from server: ${response.status}`);
+            }
+            navigate('/')
         } catch (error) {
-
-            console.error("Error during signup:", error);
+            if (error.response) {
+                console.error("Error Response from Backend:", error.response);
+                toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
+            } else {
+                console.error("Unexpected Error:", error);
+                alert("An unexpected error occurred");
+            }
+            const modal = document.getElementById("my_modal_3");
+                    if (modal) {
+                        modal.close();
+                    }
+            navigate('/')
         }
     };
+    
 
     const openLoginModal = () => setShowLoginModal(true);
     const closeLoginModal = () => setShowLoginModal(false);
 
     return (
+        <>
+       <Navbar/>
         <div className={`flex justify-center items-center h-screen bg-white text-black ${theme === "dark" ? "dark:bg-gray-800 dark:text-white" : "bg-white text-black"}`}>
             <div className="rounded-lg p-4 w-90 py-6 bg-white text-black shadow-lg">
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -57,7 +85,7 @@ const Signup = () => {
                             type="text"
                             placeholder="Enter your Name"
                             className="mt-2 w-full px-2 rounded-md py-1 bg-white text-black border border-gray-300"
-                            {...register("name", { required: "Name is required" })}
+                            {...register("fullname", { required: "Name is required" })}
                         />
                     </div>
 
@@ -115,6 +143,8 @@ const Signup = () => {
                 </div>
             )}
         </div>
+        <Footer/>
+        </>
     );
 };
 

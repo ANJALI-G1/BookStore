@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "./ThemeContext";
 import Login from "./Login";
-
+import { useAuth } from "../context/AuthProvider";
+import Logout from "./Logout";
 const Navbar = () => {
+
+    const [authUser,setAuthUser]=useAuth();
     const [sticky, setSticky] = useState(false);
     const [isOpen, setIsOpen] = useState(false); // For mobile menu
     const { theme, setTheme } = useContext(ThemeContext);
@@ -60,7 +63,7 @@ const Navbar = () => {
                         ☰
                     </button>
                     <a className="btn btn-ghost text-2xl font-bold cursor-pointer bg-black text-white">
-                        BookStoreLogo
+                    Coral Chapters
                     </a>
                 </div>
                 
@@ -93,11 +96,20 @@ const Navbar = () => {
                             </svg>
                         )}
                     </button>
-                    <a className="bg-black text-white px-3 py-2 rounded-md hover:bg-gray-800 duration-300 cursor-pointer"
-                    onClick={()=>document.getElementById("my_modal_3").showModal()}>
-                        Login
+                    {
+                        authUser?<Logout/>:
+                    <div>
+                    <a 
+                    onClick={()=>document.getElementById("my_modal_3").showModal()} className="py-2">
+                        <Login/>
+                        
+                        {/* Login */}
                     </a>
-                    <Login/>
+                    {/* <Login/> */}
+                    
+                    </div>
+}
+                    
                 </div>
             </div>
 
